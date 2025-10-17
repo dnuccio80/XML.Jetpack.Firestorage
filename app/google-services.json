@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "429093199259",
+    "project_id": "firestorage-b01f3",
+    "storage_bucket": "firestorage-b01f3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:429093199259:android:2c157db8be3eeed23e153e",
+        "android_client_info": {
+          "package_name": "com.example.xml_jetpackfirestorage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1viXZ3XfyQtv3B-i6nIFYFgKGymHINH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

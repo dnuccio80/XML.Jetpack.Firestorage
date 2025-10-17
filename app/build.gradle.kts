@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.google.gms.google.services)
 
 }
 
@@ -54,6 +55,7 @@ dependencies {
     // Dagger Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.material3.android)
+    implementation(libs.firebase.storage)
     kapt(libs.hilt.android.compiler)
     implementation (libs.androidx.hilt.navigation.compose)
 
