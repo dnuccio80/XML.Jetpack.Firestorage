@@ -17,7 +17,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.xml_jetpackfirestorage.R
 import com.example.xml_jetpackfirestorage.databinding.ActivityUploadComposeBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UploadComposeActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityUploadComposeBinding

@@ -9,8 +9,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.xml_jetpackfirestorage.R
 import com.example.xml_jetpackfirestorage.databinding.ActivityUploadXmlBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class UploadXmlActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class UploadXmlActivity @Inject constructor(): AppCompatActivity() {
 
     private lateinit var binding : ActivityUploadXmlBinding
 
@@ -24,6 +27,11 @@ class UploadXmlActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        initUI()
+    }
+
+    private fun initUI() {
+//        binding.tvTitle.text = storage.getCertificatePath()
     }
 
     companion object {
