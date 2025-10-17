@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".FileApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,6 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.XMLJetpackFirestorage"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.compose.upload.UploadComposeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.xml.upload.UploadXmlActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
