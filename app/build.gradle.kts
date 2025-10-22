@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.compose.graphics)
     implementation(libs.compose.tooling.preview)
 
+    // Coil
+    implementation(libs.coil.compose)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

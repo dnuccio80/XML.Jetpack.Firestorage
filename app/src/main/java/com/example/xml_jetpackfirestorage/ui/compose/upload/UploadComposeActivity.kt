@@ -14,9 +14,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Text
@@ -26,6 +28,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -43,6 +48,7 @@ import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.xml_jetpackfirestorage.R
 import com.example.xml_jetpackfirestorage.databinding.ActivityUploadComposeBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -95,6 +101,8 @@ class UploadComposeActivity : AppCompatActivity() {
 
         var uri: Uri? by remember { mutableStateOf(null) }
 
+        val imageUri by viewModel.imageUri.collectAsState()
+
         val intentCameraLauncher = rememberLauncherForActivityResult(TakePicture()) {
             if (it && uri?.path?.isNotEmpty() == true) {
                 viewModel.uploadBasicImage(uri!!)
@@ -109,9 +117,27 @@ class UploadComposeActivity : AppCompatActivity() {
             }
         }
 
+        LaunchedEffect(true) {
+            viewModel.downloadBasicImage()
+        }
+
+
         var showDialog by rememberSaveable { mutableStateOf(false) }
 
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(
+            Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            AsyncImage(
+                model = imageUri,
+                contentDescription = "",
+                modifier = Modifier.size(300.dp),
+                contentScale = ContentScale.FillBounds,
+                placeholder = painterResource(R.drawable.ic_camera),
+                error = painterResource(R.drawable.ic_launcher_background)
+            )
+            Spacer(modifier = Modifier.size(16.dp))
             FloatingActionButton(
                 onClick = {
                     showDialog = true
@@ -126,6 +152,7 @@ class UploadComposeActivity : AppCompatActivity() {
                 )
             }
         }
+
         SelectorDialog(
             showDialog,
             onDismiss = { showDialog = false },
@@ -165,7 +192,7 @@ class UploadComposeActivity : AppCompatActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Button (
+                    Button(
                         onClick = { onTakePhotoClick() },
                         shape = RoundedCornerShape(4.dp),
                         colors = ButtonDefaults.buttonColors(
