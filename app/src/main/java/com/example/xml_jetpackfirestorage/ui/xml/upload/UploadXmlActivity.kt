@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts.TakePicture
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -83,22 +82,22 @@ class UploadXmlActivity @Inject constructor(): AppCompatActivity() {
 
     private fun showSelectorDialog() {
         selectPathBinding = SelectPathDialogBinding.inflate(layoutInflater)
-        val alertDialog = AlertDialog.Builder(this).apply {
+        val dialog = AlertDialog.Builder(this).apply {
             setView(selectPathBinding.root)
         }.create()
 
-        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         selectPathBinding.btnTakePhoto.setOnClickListener {
             takePhoto()
-            alertDialog.dismiss()
+            dialog.dismiss()
         }
         selectPathBinding.btnSelectFromGallery.setOnClickListener {
             pickPhotoFromGallery()
-            alertDialog.dismiss()
+            dialog.dismiss()
         }
 
-        alertDialog.show()
+        dialog.show()
     }
 
     private fun generateUri() {
