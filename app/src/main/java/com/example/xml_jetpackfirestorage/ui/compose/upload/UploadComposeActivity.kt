@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.activity.result.contract.ActivityResultContracts.TakePicture
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,14 +20,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldColors
+import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -102,25 +110,25 @@ class UploadComposeActivity : AppCompatActivity() {
         var uri: Uri? by remember { mutableStateOf(null) }
 
         val imageUri by viewModel.imageUri.collectAsState()
+        val isLoading by viewModel.isLoading.collectAsState()
+        var textValue by rememberSaveable { mutableStateOf("") }
 
         val intentCameraLauncher = rememberLauncherForActivityResult(TakePicture()) {
             if (it && uri?.path?.isNotEmpty() == true) {
-                viewModel.uploadBasicImage(uri!!)
+                viewModel.uploadAndGetImage(uri!!, textValue)
+                textValue = ""
+
             }
         }
 
         val intentGalleryLauncher = rememberLauncherForActivityResult(GetContent()) { uri ->
             uri?.let {
                 if (it.path?.isNotEmpty() == true) {
-                    viewModel.uploadBasicImage(it)
+                    viewModel.uploadAndGetImage(it, textValue)
+                    textValue = ""
                 }
             }
         }
-
-        LaunchedEffect(true) {
-            viewModel.downloadBasicImage()
-        }
-
 
         var showDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -129,13 +137,34 @@ class UploadComposeActivity : AppCompatActivity() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            AsyncImage(
-                model = imageUri,
-                contentDescription = "",
+            Card(
                 modifier = Modifier.size(300.dp),
-                contentScale = ContentScale.FillBounds,
-                placeholder = painterResource(R.drawable.ic_camera),
-                error = painterResource(R.drawable.ic_launcher_background)
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(16.dp)
+            ) {
+                Box(modifier = Modifier.size(300.dp), contentAlignment = Alignment.Center) {
+                    AsyncImage(
+                        model = imageUri,
+                        contentDescription = "",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.FillBounds,
+                    )
+                    if (isLoading) CircularProgressIndicator()
+                }
+            }
+
+            Spacer(modifier = Modifier.size(16.dp))
+            TextField(
+                value = textValue,
+                onValueChange = {newValue -> textValue = newValue },
+                modifier = Modifier.width(300.dp).border(2.dp, colorResource(R.color.green)),
+                shape = RoundedCornerShape(16.dp),
+                colors = textFieldColors(
+                    backgroundColor = Color.Transparent,
+
+                ),
+                maxLines = 1,
+                singleLine = true,
             )
             Spacer(modifier = Modifier.size(16.dp))
             FloatingActionButton(
@@ -167,6 +196,8 @@ class UploadComposeActivity : AppCompatActivity() {
             }
         )
     }
+
+
 
     @Composable
     fun SelectorDialog(

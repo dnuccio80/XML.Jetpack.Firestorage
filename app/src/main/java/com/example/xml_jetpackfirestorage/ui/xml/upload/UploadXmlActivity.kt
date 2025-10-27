@@ -13,10 +13,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle.State.*
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
 import com.example.xml_jetpackfirestorage.R
 import com.example.xml_jetpackfirestorage.databinding.ActivityUploadXmlBinding
 import com.example.xml_jetpackfirestorage.databinding.SelectPathDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,9 +30,9 @@ import java.util.Objects
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UploadXmlActivity @Inject constructor(): AppCompatActivity() {
+class UploadXmlActivity @Inject constructor() : AppCompatActivity() {
 
-    private lateinit var binding : ActivityUploadXmlBinding
+    private lateinit var binding: ActivityUploadXmlBinding
     private lateinit var selectPathBinding: SelectPathDialogBinding
 
     private val viewModel: UploadXmlViewModel by viewModels()
@@ -34,18 +40,19 @@ class UploadXmlActivity @Inject constructor(): AppCompatActivity() {
     private lateinit var uri: Uri
 
     private var intentCameraLauncher = registerForActivityResult(TakePicture()) {
-        if(it && uri.path?.isNotEmpty() == true) {
-            viewModel.uploadBasicImage(uri)
+        if (it && uri.path?.isNotEmpty() == true) {
+            viewModel.uploadAndGetImage(uri) { setImage() }
         }
     }
 
-    private var intentGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            if(it.path?.isNotEmpty() == true){
-                viewModel.uploadBasicImage(uri)
+    private var intentGalleryLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                if (it.path?.isNotEmpty() == true) {
+                    viewModel.uploadAndGetImage(uri) { setImage() }
+                }
             }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,14 +71,22 @@ class UploadXmlActivity @Inject constructor(): AppCompatActivity() {
 
     private fun initUI() {
         binding.fabImage.setOnClickListener { showSelectorDialog() }
-
+        
+        lifecycleScope.launch { 
+            repeatOnLifecycle(STARTED) {
+                viewModel.isLoading.collect {
+                    binding.progressBar.isVisible = it
+                    if(it) deleteImage()
+                }
+            }
+        }
     }
 
     companion object {
         fun create(context: Context) = Intent(context, UploadXmlActivity::class.java)
     }
 
-    private fun takePhoto(){
+    private fun takePhoto() {
         generateUri()
         intentCameraLauncher.launch(uri)
     }
@@ -112,4 +127,19 @@ class UploadXmlActivity @Inject constructor(): AppCompatActivity() {
         val name = SimpleDateFormat("yyyyMMdd_hhmmss").format(Date())
         return File.createTempFile(name, ".jpg", externalCacheDir)
     }
+
+    private fun setImage() {
+        Glide.with(this)
+            .load(viewModel.imageUri)
+            .centerCrop()
+            .into(binding.ivBasicImage)
+    }
+
+    private fun deleteImage() {
+        Glide.with(this)
+            .load("")
+            .centerCrop()
+            .into(binding.ivBasicImage)
+    }
+
 }
