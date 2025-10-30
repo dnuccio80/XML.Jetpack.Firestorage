@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -50,15 +51,22 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.xml_jetpackfirestorage.R
 import com.example.xml_jetpackfirestorage.databinding.ActivityUploadComposeBinding
+import com.example.xml_jetpackfirestorage.ui.compose.Routes
+import com.example.xml_jetpackfirestorage.ui.compose.list.ListImagesActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.text.SimpleDateFormat
@@ -121,6 +129,8 @@ class UploadComposeActivity : AppCompatActivity() {
             }
         }
 
+
+
         val intentGalleryLauncher = rememberLauncherForActivityResult(GetContent()) { uri ->
             uri?.let {
                 if (it.path?.isNotEmpty() == true) {
@@ -163,6 +173,7 @@ class UploadComposeActivity : AppCompatActivity() {
                     backgroundColor = Color.Transparent,
 
                 ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
                 maxLines = 1,
                 singleLine = true,
             )
@@ -179,6 +190,11 @@ class UploadComposeActivity : AppCompatActivity() {
                     contentDescription = "camera button",
                     tint = Color.White
                 )
+            }
+            Button(
+                onClick = { startActivity(ListImagesActivity.create(this@UploadComposeActivity)) }
+            ) {
+                Text("View all images")
             }
         }
 

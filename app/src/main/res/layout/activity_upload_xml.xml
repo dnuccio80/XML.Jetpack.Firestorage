@@ -40,6 +40,18 @@
 
         </androidx.cardview.widget.CardView>
 
+        <EditText
+            android:id="@+id/etName"
+            android:layout_marginTop="16dp"
+            android:layout_width="300dp"
+            android:background="@drawable/bg_rounded_et"
+            android:singleLine="true"
+            android:padding="8dp"
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:layout_height="wrap_content"
+
+            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabImage"

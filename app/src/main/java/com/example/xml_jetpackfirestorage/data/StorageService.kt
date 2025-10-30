@@ -1,6 +1,7 @@
 package com.example.xml_jetpackfirestorage.data
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
@@ -23,11 +24,14 @@ class StorageService @Inject constructor(private val storage: FirebaseStorage) {
         return reference.downloadUrl.await()
     }
 
-    suspend fun uploadAndGetImage(uri: Uri, title:String):Uri {
+    suspend fun uploadAndGetImage(uri: Uri, title: String): Uri {
 
         return suspendCancellableCoroutine { continuation ->
 
-            val reference = if(title.isNotBlank()) storage.reference.child(title) else storage.reference.child(uri.lastPathSegment.orEmpty())
+            val reference =
+                if (title.isNotBlank()) storage.reference.child(title) else storage.reference.child(
+                    uri.lastPathSegment.orEmpty()
+                )
             val uploadTask = reference.putFile(uri)
 
             uploadTask
@@ -52,4 +56,9 @@ class StorageService @Inject constructor(private val storage: FirebaseStorage) {
 
     }
 
+    suspend fun getAllImages(): List<Uri> {
+        return storage.reference.listAll().await().items.map { reference ->
+            reference.downloadUrl.await()
+        }
+    }
 }
